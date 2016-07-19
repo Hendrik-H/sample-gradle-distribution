@@ -1,0 +1,36 @@
+plugins {
+    id 'maven-publish'
+    id 'de.undercouch.download' version '3.1.0'
+    id 'distribution'
+}
+
+version = '1.0'
+
+ext.gradleVersion = '2.13'
+
+task downloadGradle(type: de.undercouch.gradle.tasks.download.Download) {
+    onlyIfNewer true
+    
+    src "http://services.gradle.org/distributions/gradle-${gradleVersion}-bin.zip"
+    dest "${buildDir}/download/gradle.zip"
+}
+
+task gradleDistribution(type: Zip, dependsOn: downloadGradle) {
+    from zipTree(downloadGradle.dest)
+    into "gradle-${gradleVersion}/init.d", {
+        from 'src/init.d'
+    }
+    archiveName "sample-gradle-bin.zip"
+    destinationDir file("${buildDir}/distribution")
+}
+
+publishing {
+    publications {
+        gradle(MavenPublication) {
+            groupId    'sample'
+            artifactId 'sample-gradle-distribution'
+            
+            artifact gradleDistribution
+        }
+    }
+}

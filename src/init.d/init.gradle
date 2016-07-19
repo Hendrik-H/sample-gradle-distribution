@@ -1,0 +1,14 @@
+initscript {
+    repositories {
+        jcenter()
+        mavenLocal()
+    }
+    dependencies {
+        classpath group: 'sample', name: 'sample-gradle-init-plugin', version: '0.1.0', changing: true
+    }
+    configurations.classpath.resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+rootProject {
+    apply plugin: sample.gradle.init.InitPlugin, to: gradle
+}
